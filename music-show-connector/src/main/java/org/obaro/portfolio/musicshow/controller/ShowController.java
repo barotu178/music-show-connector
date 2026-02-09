@@ -22,13 +22,19 @@ public class ShowController {
         this.showRepository = showRepository;
     }
 
+    // --------------------
+    // READ ALL
     // GET /shows
+    // --------------------
     @GetMapping
     public List<Show> getAllShows() {
         return showRepository.findAll();
     }
 
+    // --------------------
+    // READ ONE
     // GET /shows/{id}
+    // --------------------
     @GetMapping("/{id}")
     public Show getShowById(@PathVariable Long id) {
         return showRepository.findById(id)
@@ -39,7 +45,10 @@ public class ShowController {
                 );
     }
 
+    // --------------------
+    // CREATE
     // POST /shows
+    // --------------------
     @PostMapping
     public ResponseEntity<Show> createShow(
             @Valid @RequestBody ShowRequest request) {
@@ -55,5 +64,46 @@ public class ShowController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(savedShow);
+    }
+
+    // --------------------
+    // UPDATE
+    // PUT /shows/{id}
+    // --------------------
+    @PutMapping("/{id}")
+    public Show updateShow(
+            @PathVariable Long id,
+            @Valid @RequestBody ShowRequest request) {
+
+        Show show = showRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Show not found with id " + id
+                        )
+                );
+
+        show.setArtist(request.getArtist());
+        show.setVenue(request.getVenue());
+        show.setCity(request.getCity());
+        show.setShowDate(request.getShowDate());
+
+        return showRepository.save(show);
+    }
+
+    // --------------------
+    // DELETE
+    // DELETE /shows/{id}
+    // --------------------
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteShow(@PathVariable Long id) {
+
+        if (!showRepository.existsById(id)) {
+            throw new ResourceNotFoundException(
+                    "Show not found with id " + id
+            );
+        }
+
+        showRepository.deleteById(id);
     }
 }
