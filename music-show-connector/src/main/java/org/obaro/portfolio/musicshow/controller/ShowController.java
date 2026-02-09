@@ -23,11 +23,30 @@ public class ShowController {
     }
 
     // --------------------
-    // READ ALL
+    // READ ALL + SEARCH
     // GET /shows
+    // GET /shows?city=Milwaukee
+    // GET /shows?artist=Burning%20Spear
+    // GET /shows?city=Milwaukee&artist=Burning%20Spear
     // --------------------
     @GetMapping
-    public List<Show> getAllShows() {
+    public List<Show> getShows(
+            @RequestParam(required = false) String city,
+            @RequestParam(required = false) String artist) {
+
+        if (city != null && artist != null) {
+            return showRepository
+                    .findByCityIgnoreCaseAndArtistIgnoreCase(city, artist);
+        }
+
+        if (city != null) {
+            return showRepository.findByCityIgnoreCase(city);
+        }
+
+        if (artist != null) {
+            return showRepository.findByArtistIgnoreCase(artist);
+        }
+
         return showRepository.findAll();
     }
 
