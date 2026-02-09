@@ -1,15 +1,27 @@
 package org.obaro.portfolio.musicshow.repository;
 
 import org.obaro.portfolio.musicshow.entity.Show;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
+import java.time.LocalDate;
 
 public interface ShowRepository extends JpaRepository<Show, Long> {
 
-    List<Show> findByCityIgnoreCase(String city);
+    Page<Show> findByCityIgnoreCase(String city, Pageable pageable);
 
-    List<Show> findByArtistIgnoreCase(String artist);
+    Page<Show> findByArtistIgnoreCase(String artist, Pageable pageable);
 
-    List<Show> findByCityIgnoreCaseAndArtistIgnoreCase(String city, String artist);
+    Page<Show> findByCityIgnoreCaseAndArtistIgnoreCase(
+            String city,
+            String artist,
+            Pageable pageable
+    );
+
+    Page<Show> findByShowDateBetween(
+            LocalDate from,
+            LocalDate to,
+            Pageable pageable
+    );
 }
