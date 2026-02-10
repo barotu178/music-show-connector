@@ -7,8 +7,9 @@ import org.obaro.portfolio.musicshow.repository.ShowRepository;
 
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,10 +27,11 @@ public class ShowController {
     }
 
     // -------------------------------------------------
-    // READ ALL + SEARCH + PAGINATION + DATE RANGE
+    // READ ALL + SEARCH + PAGINATION + SORTING + DATE RANGE
     //
     // GET /shows
     // GET /shows?page=0&size=5
+    // GET /shows?sort=showDate,desc
     // GET /shows?city=Milwaukee
     // GET /shows?artist=Burning%20Spear
     // GET /shows?city=Milwaukee&artist=Burning%20Spear
@@ -41,10 +43,9 @@ public class ShowController {
             @RequestParam(required = false) String artist,
             @RequestParam(required = false) String from,
             @RequestParam(required = false) String to,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size
+            @PageableDefault(sort = "showDate", direction = Sort.Direction.ASC)
+            Pageable pageable
     ) {
-        Pageable pageable = PageRequest.of(page, size);
 
         // Date range filter
         if (from != null && to != null) {
