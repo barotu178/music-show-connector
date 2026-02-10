@@ -1,5 +1,6 @@
 package org.obaro.portfolio.musicshow.controller;
 
+import org.obaro.portfolio.musicshow.dto.ApiPageResponse;
 import org.obaro.portfolio.musicshow.dto.ShowRequest;
 import org.obaro.portfolio.musicshow.entity.Show;
 import org.obaro.portfolio.musicshow.exception.ResourceNotFoundException;
@@ -28,17 +29,9 @@ public class ShowController {
 
     // -------------------------------------------------
     // READ ALL + SEARCH + PAGINATION + SORTING + DATE RANGE
-    //
-    // GET /shows
-    // GET /shows?page=0&size=5
-    // GET /shows?sort=showDate,desc
-    // GET /shows?city=Milwaukee
-    // GET /shows?artist=Burning%20Spear
-    // GET /shows?city=Milwaukee&artist=Burning%20Spear
-    // GET /shows?from=2026-04-01&to=2026-05-01
     // -------------------------------------------------
     @GetMapping
-    public Page<Show> getShows(
+    public ApiPageResponse<Show> getShows(
             @RequestParam(required = false) String city,
             @RequestParam(required = false) String artist,
             @RequestParam(required = false) String from,
@@ -47,38 +40,46 @@ public class ShowController {
             Pageable pageable
     ) {
 
+        Page<Show> pageResult;
+
         // Date range filter
         if (from != null && to != null) {
-            return showRepository.findByShowDateBetween(
+            pageResult = showRepository.findByShowDateBetween(
                     LocalDate.parse(from),
                     LocalDate.parse(to),
                     pageable
             );
         }
-
         // City + Artist filter
-        if (city != null && artist != null) {
-            return showRepository
+        else if (city != null && artist != null) {
+            pageResult = showRepository
                     .findByCityIgnoreCaseAndArtistIgnoreCase(city, artist, pageable);
         }
-
         // City only
-        if (city != null) {
-            return showRepository.findByCityIgnoreCase(city, pageable);
+        else if (city != null) {
+            pageResult = showRepository.findByCityIgnoreCase(city, pageable);
         }
-
         // Artist only
-        if (artist != null) {
-            return showRepository.findByArtistIgnoreCase(artist, pageable);
+        else if (artist != null) {
+            pageResult = showRepository.findByArtistIgnoreCase(artist, pageable);
+        }
+        // No filters
+        else {
+            pageResult = showRepository.findAll(pageable);
         }
 
-        // No filters
-        return showRepository.findAll(pageable);
+        return new ApiPageResponse<>(
+                pageResult.getContent(),
+                pageResult.getNumber(),
+                pageResult.getSize(),
+                pageResult.getTotalElements(),
+                pageResult.getTotalPages(),
+                pageable.getSort().toString()
+        );
     }
 
     // --------------------
     // READ ONE
-    // GET /shows/{id}
     // --------------------
     @GetMapping("/{id}")
     public Show getShowById(@PathVariable Long id) {
@@ -92,7 +93,6 @@ public class ShowController {
 
     // --------------------
     // CREATE
-    // POST /shows
     // --------------------
     @PostMapping
     public ResponseEntity<Show> createShow(
@@ -113,7 +113,6 @@ public class ShowController {
 
     // --------------------
     // UPDATE
-    // PUT /shows/{id}
     // --------------------
     @PutMapping("/{id}")
     public Show updateShow(
@@ -137,7 +136,6 @@ public class ShowController {
 
     // --------------------
     // DELETE
-    // DELETE /shows/{id}
     // --------------------
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
