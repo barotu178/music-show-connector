@@ -1,70 +1,362 @@
-\# Music Show Connector
+\# 🎵 Music Show Connector API
 
 
 
-Music Show Connector is a Java Spring Boot web application that helps users discover live music shows and connect with other music fans attending the same events.
+Music Show Connector is a \*\*Spring Boot REST API\*\* for managing and discovering live music shows.
+
+This project was built as a \*\*portfolio backend application\*\* to demonstrate clean REST design,
+
+pagination, validation, secure configuration, and integration testing.
 
 
 
-\## Purpose
-
-The goal of this project is to make it easier for people to find live music events and build community around shared musical interests.
+---
 
 
 
-\## Features
-
-\- Browse upcoming live music shows
-
-\- View show details including artist, venue, and date
-
-\- Connect with users interested in the same shows
-
-\- RESTful backend built with Spring Boot
+\## 🎯 Purpose
 
 
 
-\## Tech Stack
+The goal of this project is to provide a reliable backend service that allows clients to:
 
-\- Java
+\- Discover upcoming live music shows
 
-\- Spring Boot
+\- Search and filter shows efficiently
+
+\- Manage show data through a well-designed REST API
+
+
+
+The focus of this project is \*\*backend engineering best practices\*\*.
+
+
+
+---
+
+
+
+\## 🚀 Features
+
+
+
+\- Full CRUD operations for music shows
+
+\- Search and filtering by:
+
+&nbsp; - City
+
+&nbsp; - Artist
+
+&nbsp; - Date range
+
+\- Pagination and sorting support
+
+\- DTO-based request validation
+
+\- Proper HTTP status codes (`201`, `400`, `404`)
+
+\- Standardized paginated API responses
+
+\- Secure configuration using environment variables
+
+\- Integration tests with an isolated test database
+
+\- OpenAPI / Swagger documentation
+
+
+
+---
+
+
+
+\## 🛠️ Tech Stack
+
+
+
+\- \*\*Java 17\*\*
+
+\- \*\*Spring Boot 3\*\*
+
+\- Spring Web
+
+\- Spring Data JPA
+
+\- Hibernate
+
+\- MySQL (development / production)
+
+\- H2 (test profile)
+
+\- JUnit 5
+
+\- MockMvc
 
 \- Maven
-
-\- REST APIs
 
 \- Git \& GitHub
 
 
 
-\## Project Status
-
-This project is currently under active development.
+---
 
 
 
-\## Getting Started
+\## 📦 API Endpoints
 
 
 
-\### Prerequisites
+\### Get all shows (pagination \& sorting)
 
-\- Java 17+
+```
 
-\- Maven
+GET /shows?page=0\&size=5\&sort=artist,desc
 
-\- An IDE such as IntelliJ IDEA or Eclipse
+```
 
 
 
-\### Running the Application
+\### Filter by city and/or artist
 
-1\. Clone the repository:
+```
 
-&nbsp;  ```bash
+GET /shows?city=Milwaukee
 
-&nbsp;  git clone https://github.com/barotu178/music-show-connector.git
+GET /shows?artist=Tems
+
+GET /shows?city=Milwaukee\&artist=Burning%20Spear
+
+```
+
+
+
+\### Filter by date range
+
+```
+
+GET /shows?from=2026-04-01\&to=2026-05-01
+
+```
+
+
+
+\### Get show by ID
+
+```
+
+GET /shows/{id}
+
+```
+
+
+
+\### Create a show
+
+```
+
+POST /shows
+
+```
+
+
+
+```json
+
+{
+
+&nbsp; "artist": "Tems",
+
+&nbsp; "venue": "Madison Square Garden",
+
+&nbsp; "city": "New York",
+
+&nbsp; "showDate": "2026-05-10"
+
+}
+
+```
+
+
+
+\### Update a show
+
+```
+
+PUT /shows/{id}
+
+```
+
+
+
+\### Delete a show
+
+```
+
+DELETE /shows/{id}
+
+```
+
+
+
+---
+
+
+
+\## 📄 Sample Paginated Response
+
+
+
+```json
+
+{
+
+&nbsp; "data": \[
+
+&nbsp;   {
+
+&nbsp;     "id": 3,
+
+&nbsp;     "artist": "Tems",
+
+&nbsp;     "showDate": "2026-05-10",
+
+&nbsp;     "venue": "Madison Square Garden",
+
+&nbsp;     "city": "New York"
+
+&nbsp;   }
+
+&nbsp; ],
+
+&nbsp; "page": 0,
+
+&nbsp; "size": 3,
+
+&nbsp; "totalElements": 6,
+
+&nbsp; "totalPages": 2,
+
+&nbsp; "sort": "artist: DESC"
+
+}
+
+```
+
+
+
+---
+
+
+
+\## 🧪 Testing Strategy
+
+
+
+\- Integration tests using `@SpringBootTest` and `MockMvc`
+
+\- Test profile uses \*\*H2 in-memory database\*\*
+
+\- Tests cover:
+
+&nbsp; - Pagination and sorting
+
+&nbsp; - Successful resource creation
+
+&nbsp; - Validation failures (`400 Bad Request`)
+
+&nbsp; - Resource not found scenarios (`404 Not Found`)
+
+
+
+Run tests:
+
+```
+
+mvn test
+
+```
+
+
+
+---
+
+
+
+\## 🔐 Configuration
+
+
+
+Database credentials are externalized using \*\*environment variables\*\*.
+
+
+
+Example:
+
+```
+
+DB\_URL=jdbc:mysql://localhost:3306/musicdb
+
+DB\_USERNAME=your\_username
+
+DB\_PASSWORD=your\_password
+
+```
+
+
+
+This keeps secrets out of source control.
+
+
+
+---
+
+
+
+\## 📘 API Documentation
+
+
+
+Swagger UI is available at:
+
+```
+
+http://localhost:8080/swagger-ui.html
+
+```
+
+
+
+---
+
+
+
+\## 📌 Project Status
+
+
+
+✔ Backend complete  
+
+✔ Fully tested  
+
+✔ Portfolio-ready  
+
+
+
+Future enhancements may include authentication and a frontend client.
+
+
+
+---
+
+
+
+\## 👤 Author
+
+
+
+\*\*Obaro Aruotu\*\*  
+
+Java / Backend Developer
 
 
 
